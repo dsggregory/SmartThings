@@ -8,7 +8,10 @@
 
 metadata {
 	// Preferences
-
+	definition (name: "Garage Door", namespace: "dsg", author: "Scott Gregory") {
+		capability "Sensor"
+		capability "Switch"
+	}
 
 	// tile definitions
 	tiles {
