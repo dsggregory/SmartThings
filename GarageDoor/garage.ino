@@ -5,62 +5,10 @@
 #include <SoftwareSerial.h>   //TODO need to set due to some weird wire language linker, should we absorb this whole library into smartthings
 #include <SmartThings.h>
 
-/// Wiring to Relays and Reed Switches
-///
-/// SmartThings Shield (atop Arduino)
-///                     ______________
-///                    |              |
-///                    |         SW[] |
-///                    |[]RST         |
-///                    |         AREF |--
-///                    |          GND |--X Relay GND
-///                    |           13 |--X LED
-///                    |           12 |--
-///                    |           11 |--
-///                  --| 3.3V      10 |--
-///       Relay VCC X--| 5V         9 |--X Right Reed Sw
-///     Reed lt GND X--| GND        8 |--X Left Reed Sw
-///     Reed rt GND X--| GND          |
-///                  --| Vin        7 |--X Relay IN1 (Left Door)
-///                    |            6 |--
-///                  --| A0         5 |--
-///                  --| A1    ( )  4 |--X Relay IN2 (Right Door)
-///                  --| A2         3 |--
-///                  --| A3  ____   2 |--
-///                  --| A4 |    |  1 |--
-///                  --| A5 |    |  0 |--
-///                    |____|    |____|
-///                         |____|
-///
-/// Relay
-/// Normally open connections to the garage motor where existing wall switches connect.
-/// When Arduino recv's pushLeft or pushRight command, it closes the switch for 1s.
-///                      ______________
-///        Rt Garage SW | NO       VCC |-- Ard 5V
-///        Rt Garage SW | COM      IN2 |-- Ard 4
-///                     | NC       IN1 |-- Ard 7
-///                     |          GND |-- Ard GND
-///        Lt Garage SW | NO           |
-///        Lt Garage SW | COM          |
-///                     | NC           |
-///                      --------------
-///
-/// Reed Switch (ex. right)
-/// Ref: http://myhowtosandprojects.blogspot.com/2014/02/sainsmart-2-channel-5v-relay-arduino.html
-/// When apart, it goes "closed". Range is about 1in.
-/// Pulling apart on the long axis, I get initial_state=closed -> open -> closed -> open.
-/// Pulling apart on the short axis changes the state only once.
-///   So, position so it can pull apart directly as to not transition through those states.
-///                         _______
-///          Reed rt COM --| COM  >|
-///                      --| NC    |
-///                Ard 9 --| NO    |
-///                         -------
-
-
 //*****************************************************************************
 // Pin Definitions    | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
 //                    V V V V V V V V V V V V V V V V V V V V V V V V V V V V V
+/// See README.md for pinouts diagram.
 //*****************************************************************************
 #define PIN_LED           13
 #define PIN_THING_RX      3
@@ -233,9 +181,6 @@ void setup()
     smartthing.send("rightDoor open");
     Serial.println("rightDoor open");
   }
-
-
-
 }
 
 //*****************************************************************************
@@ -270,6 +215,5 @@ void messageCallout(String message)
   {
     pushRight();
   }
-
 }
 

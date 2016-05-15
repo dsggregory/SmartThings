@@ -52,6 +52,7 @@ The STsh has an on-board LED. The following table, taken from garage.ino:setNetw
 
 ## Pinouts
 ```
+/// Wiring to Relays and Reed Switches
 ///
 /// SmartThings Shield (atop Arduino)
 ///                     ______________
@@ -79,21 +80,29 @@ The STsh has an on-board LED. The following table, taken from garage.ino:setNetw
 ///                         |____|
 ///
 /// Relay
+/// Normally open connections to the garage motor where existing wall switches connect.
+/// When Arduino recv's pushLeft or pushRight command, it closes the switch for 1s.
 ///                      ______________
-///                     | NO       VCC |-- Ard 5V
+///        Rt Garage SW | NO       VCC |-- Ard 5V
 ///        Rt Garage SW | COM      IN2 |-- Ard 4
-///        Rt Garage SW | NC       IN1 |-- Ard 7
+///                     | NC       IN1 |-- Ard 7
 ///                     |          GND |-- Ard GND
-///                     | NO           |
+///        Lt Garage SW | NO           |
 ///        Lt Garage SW | COM          |
-///        Lt Garage SW | NC           |
+///                     | NC           |
 ///                      --------------
 ///
 /// Reed Switch (ex. right)
+/// Ref: http://myhowtosandprojects.blogspot.com/2014/02/sainsmart-2-channel-5v-relay-arduino.html
+/// When apart, it goes "closed". Range is about 1in.
+/// Pulling apart on the long axis, I get initial_state=closed -> open -> closed -> open.
+/// Pulling apart on the short axis changes the state only once.
+///   So, physically position so it can pull apart directly as to not transition through those states.
 ///                         _______
-///            Relay COM --| COM  >|   ??? can we go to this common?
-///                Ard 9 --| NC    |
-///                      --| NO    |
+///          Reed rt COM --| COM  >|
+///                      --| NC    |
+///                Ard 9 --| NO    |
 ///                         -------
+
 ```
 
