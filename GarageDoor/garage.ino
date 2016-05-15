@@ -5,6 +5,34 @@
 #include <SoftwareSerial.h>   //TODO need to set due to some weird wire language linker, should we absorb this whole library into smartthings
 #include <SmartThings.h>
 
+/// Wiring to Relays and Reed Switches
+/// Ref: http://myhowtosandprojects.blogspot.com/2014/02/sainsmart-2-channel-5v-relay-arduino.html
+///
+///                     ______________
+///                    |              |
+///                    |         SW[] |
+///                    |[]RST         |
+///                    |         AREF |--
+///                    |          GND |--X Relay GND
+///                    |           13 |--X LED
+///                    |           12 |--
+///                    |           11 |--
+///                  --| 3.3V      10 |--
+///       Relay VCC X--| 5V         9 |--X Right Reed Sw
+///     Reed lt GND X--| GND        8 |--X Left Reed Sw
+///     Reed rt GND X--| GND          |
+///                  --| Vin        7 |--X Relay IN1 (Left Door)
+///                    |            6 |--
+///                  --| A0         5 |--
+///                  --| A1    ( )  4 |--X Relay IN2 (Right Door)
+///                  --| A2         3 |--
+///                  --| A3  ____   2 |--
+///                  --| A4 |    |  1 |--
+///                  --| A5 |    |  0 |--
+///                    |____|    |____|
+///                         |____|
+///
+
 //*****************************************************************************
 // Pin Definitions    | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
 //                    V V V V V V V V V V V V V V V V V V V V V V V V V V V V V
@@ -12,9 +40,9 @@
 #define PIN_LED           13
 #define PIN_THING_RX      3
 #define PIN_THING_TX      2
-#define PIN_RIGHT         4   // right garage door to relay
+#define PIN_RIGHT         4   // right garage door to relay IN2
 #define PIN_RIGHT_CONTACT 9   // right reed sensor
-#define PIN_LEFT          7   // left garage door to relay
+#define PIN_LEFT          7   // left garage door to relay IN1
 #define PIN_LEFT_CONTACT  8   // left reed sensor
 #define OPEN              HIGH
 #define CLOSED            LOW
