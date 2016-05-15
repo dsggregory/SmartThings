@@ -9,8 +9,16 @@
 metadata {
 	// Preferences
 	definition (name: "Garage Door", namespace: "dsg", author: "Scott Gregory") {
-		capability "Sensor"
-		capability "Switch"
+		capability "Polling"
+       	capability "Refresh"
+        capability "Switch"
+        capability "Sensor"
+
+		attribute "leftDoor", "string"
+       	attribute "rightDoor", "string"
+        
+		command "pushLeft"
+		command "pushRight"
 	}
 
 	// tile definitions

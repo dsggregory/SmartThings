@@ -32,3 +32,7 @@ The **garage.groovy** code is to be used to define the device handler of the STs
 ** Edit the metadata.definition and set namespace and author attributes to your liking.
 ** Press "Save"
 ** Press "Publish", then  "For Me" - this delivers the code to your ST hub
+
+## Debugging
+### SmartThings Live Logging
+### Simulator

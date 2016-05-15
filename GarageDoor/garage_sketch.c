@@ -12,10 +12,10 @@
 #define PIN_LED           13
 #define PIN_THING_RX      3
 #define PIN_THING_TX      2
-#define PIN_RIGHT         4
-#define PIN_RIGHT_CONTACT 9
-#define PIN_LEFT          7
-#define PIN_LEFT_CONTACT  8
+#define PIN_RIGHT         4   // right garage door to relay
+#define PIN_RIGHT_CONTACT 9   // right reed sensor
+#define PIN_LEFT          7   // left garage door to relay
+#define PIN_LEFT_CONTACT  8   // left reed sensor
 #define OPEN              HIGH
 #define CLOSED            LOW
 #define PUSH_DELAY      1000  // milliseconds to keep the button "pushed"
