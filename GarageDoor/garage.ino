@@ -6,8 +6,8 @@
 #include <SmartThings.h>
 
 /// Wiring to Relays and Reed Switches
-/// Ref: http://myhowtosandprojects.blogspot.com/2014/02/sainsmart-2-channel-5v-relay-arduino.html
 ///
+/// SmartThings Shield (atop Arduino)
 ///                     ______________
 ///                    |              |
 ///                    |         SW[] |
@@ -32,6 +32,31 @@
 ///                    |____|    |____|
 ///                         |____|
 ///
+/// Relay
+/// Normally open connections to the garage motor where existing wall switches connect.
+/// When Arduino recv's pushLeft or pushRight command, it closes the switch for 1s.
+///                      ______________
+///        Rt Garage SW | NO       VCC |-- Ard 5V
+///        Rt Garage SW | COM      IN2 |-- Ard 4
+///                     | NC       IN1 |-- Ard 7
+///                     |          GND |-- Ard GND
+///        Lt Garage SW | NO           |
+///        Lt Garage SW | COM          |
+///                     | NC           |
+///                      --------------
+///
+/// Reed Switch (ex. right)
+/// Ref: http://myhowtosandprojects.blogspot.com/2014/02/sainsmart-2-channel-5v-relay-arduino.html
+/// When apart, it goes "closed". Range is about 1in.
+/// Pulling apart on the long axis, I get initial_state=closed -> open -> closed -> open.
+/// Pulling apart on the short axis changes the state only once.
+///   So, position so it can pull apart directly as to not transition through those states.
+///                         _______
+///          Reed rt COM --| COM  >|
+///                      --| NC    |
+///                Ard 9 --| NO    |
+///                         -------
+
 
 //*****************************************************************************
 // Pin Definitions    | | | | | | | | | | | | | | | | | | | | | | | | | | | | |

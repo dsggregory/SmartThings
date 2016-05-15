@@ -53,7 +53,7 @@ The STsh has an on-board LED. The following table, taken from garage.ino:setNetw
 ## Pinouts
 ```
 ///
-/// Arduino
+/// SmartThings Shield (atop Arduino)
 ///                     ______________
 ///                    |              |
 ///                    |         SW[] |

@@ -63,7 +63,11 @@ Map parse(String description) {
     def incoming_cmd = value.split()
 
     name = incoming_cmd[0]
-    value = incoming_cmd[1]
+	if(incoming_cmd.length == 2) {
+        value = incoming_cmd[1]
+	} else {
+	    value = name
+	}
 
 	def result = [
 		value: value,
