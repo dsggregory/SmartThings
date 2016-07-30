@@ -58,10 +58,12 @@ The serial monitor of the Arduino IDE is usefull when "dry fitting" switch and r
 ### Indicators
 The STsh has an on-board LED. The following table, taken from garage.ino:setNetworkStateLED(), describes the system state relative to the color of the LED.
 
-| off | Joined. Connected to ST |
-| red | Connecting to ST network |
-| purple | Connected but no parent |
-| green | Unknown |
+Color | Description
+----- | -----------
+off | Joined. Connected to ST
+red | Connecting to ST network
+purple | Connected but no parent
+green | Unknown
 
 ## Pinouts
 ```
