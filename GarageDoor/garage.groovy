@@ -12,7 +12,9 @@ metadata {
 		capability "Polling"
        	capability "Refresh"
         capability "Switch"
-        capability "Sensor"
+        capability "Contact Sensor"
+		
+        attribute "contact",   "string"
 
 		attribute "leftDoor", "string"
        	attribute "rightDoor", "string"
@@ -50,36 +52,49 @@ metadata {
     }
 }
 
-Map parse(String description) {
- 	def name = null
-	def value = zigbee.parse(description)?.text
-    log.debug "Value is ${value}"
-	def linkText = getLinkText(device)
-	def descriptionText = getDescriptionText(description, linkText, value)
-	def handlerName = value
-	def isStateChange = value != "ping"
-	def displayed = value && isStateChange
+List<Map> parse(String description) {
+    def msg = zigbee.parse(description)?.text
+    log.debug "Parse got '${msg}'"
 
-    def incoming_cmd = value.split()
+    def parts = msg.split(" ")
+    def name  = parts.length>0?parts[0].trim():null
+    def value = parts.length>1?parts[1].trim():null
 
-    name = incoming_cmd[0]
-	if(incoming_cmd.length == 2) {
-        value = incoming_cmd[1]
-	} else {
-	    value = name
+    name = value != "ping" ? name : null
+
+	def result = []
+    def mainResult = createEvent(name: name, value: value)
+	result << mainResult
+	
+	if(name!=null && name!='') {
+		/* Here we include the 'contact' (reed switch) state so smart apps like
+		   'Left It Open' will be able to work from the Contact Switch capability.
+			Get the current state for any of the doors and return 'open' for the
+			contact if either door is open. Only return 'closed' when both are closed.
+		*/
+		def anyOpen=false
+		def leftOpen = device.latestValue("leftDoor")=='open'
+		def rightOpen = device.latestValue("rightDoor")=='open'
+		def n_open = (leftOpen?1:0) + (rightOpen?1:0)
+		if(value=='open' || n_open>0)
+			anyOpen = true
+
+		/* State change on the contact if:
+		      o both are closed and one opens
+			  o only one is open and it closes
+		*/
+		def stateChange=false
+		if(n_open==0 && value=='open')
+			stateChange = true
+		else if(n_open==1 && value=='closed')
+			stateChange = true
+		// the overall contact state
+		result << createEvent(name: "contact", value: (anyOpen ? 'open' : 'closed'), isStateChange: stateChange)
 	}
 
-	def result = [
-		value: value,
-        name: value != "ping" ? name : null,
-		handlerName: handlerName,
-		linkText: linkText,
-		descriptionText: descriptionText,
-		isStateChange: isStateChange,
-		displayed: displayed
-	]
- 	log.debug result
-	result
+    log.debug result
+
+    return result
 }
 
 def pushLeft() {
