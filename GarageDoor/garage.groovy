@@ -1,24 +1,20 @@
-/** SmartThings Device Type. Based on ... */
 /**
- *  Garage Door
- *
- *  Author: Steve Sell
- *  Date: 2014-02-02
+ *  SmartThings Garage Door Device Handler
  */
 
 metadata {
 	// Preferences
 	definition (name: "Garage Door", namespace: "dsg", author: "Scott Gregory") {
 		capability "Polling"
-       	capability "Refresh"
-        capability "Switch"
-        capability "Contact Sensor"
+		capability "Refresh"
+		capability "Switch"
+		capability "Contact Sensor"
 		
-        attribute "contact",   "string"
+		attribute "contact",   "string"
 
 		attribute "leftDoor", "string"
-       	attribute "rightDoor", "string"
-        
+		attribute "rightDoor", "string"
+		
 		command "pushLeft"
 		command "pushRight"
 	}
@@ -27,16 +23,16 @@ metadata {
 	tiles {
 		standardTile("leftDoor", "device.leftDoor", width: 1, height: 1, canChangeIcon: true, canChangeBackground: true) {
 			state "closed", label: 'Closed', action: "pushLeft", icon: "st.doors.garage.garage-closed", backgroundColor: "#79b821", nextState: "opening"
-            state "open", label: 'Open', action: "pushLeft", icon: "st.doors.garage.garage-open", backgroundColor: "#ffa81e", nextState: "closing"
-            state "opening", label: "Opening", icon: "st.doors.garage.garage-opening", backgroundColor: "89C2E8"
-            state "closing", label: "Closing", icon: "st.doors.garage.garage-closing", backgroundColor: "89C2E8"
- 		}
-        standardTile("rightDoor", "device.rightDoor", width: 1, height: 1, canChangeIcon: true, canChangeBackground: true) {
+			state "open", label: 'Open', action: "pushLeft", icon: "st.doors.garage.garage-open", backgroundColor: "#ffa81e", nextState: "closing"
+			state "opening", label: "Opening", icon: "st.doors.garage.garage-opening", backgroundColor: "89C2E8"
+			state "closing", label: "Closing", icon: "st.doors.garage.garage-closing", backgroundColor: "89C2E8"
+		}
+		standardTile("rightDoor", "device.rightDoor", width: 1, height: 1, canChangeIcon: true, canChangeBackground: true) {
 			state "closed", label: 'Closed', action: "pushRight", icon: "st.doors.garage.garage-closed", backgroundColor: "#79b821", nextState: "opening"
-            state "open", label: 'Open', action: "pushRight", icon: "st.doors.garage.garage-open", backgroundColor: "#ffa81e", nextState: "closing"
-            state "opening", label: "Opening", icon: "st.doors.garage.garage-opening", backgroundColor: "89C2E8"
-            state "closing", label: "Closing", icon: "st.doors.garage.garage-closing", backgroundColor: "89C2E8"
- 		}
+			state "open", label: 'Open', action: "pushRight", icon: "st.doors.garage.garage-open", backgroundColor: "#ffa81e", nextState: "closing"
+			state "opening", label: "Opening", icon: "st.doors.garage.garage-opening", backgroundColor: "89C2E8"
+			state "closing", label: "Closing", icon: "st.doors.garage.garage-closing", backgroundColor: "89C2E8"
+		}
 
 		main "leftDoor"
 		details(["leftDoor","rightDoor"])
@@ -59,37 +55,56 @@ List<Map> parse(String description) {
     def parts = msg.split(" ")
     def name  = parts.length>0?parts[0].trim():null
     def value = parts.length>1?parts[1].trim():null
+    def isPing = (value=='ping')
+    def isOpen = (value=='open')
+    def isClosed = (value=='closed')
 
-    name = value != "ping" ? name : null
+    name = !isPing ? name : null
 
 	def result = []
-    def mainResult = createEvent(name: name, value: value)
+	def mainResult = createEvent(name: name, value: value)
 	result << mainResult
 	
 	if(name!=null && name!='') {
 		/* Here we include the 'contact' (reed switch) state so smart apps like
 		   'Left It Open' will be able to work from the Contact Switch capability.
-			Get the current state for any of the doors and return 'open' for the
-			contact if either door is open. Only return 'closed' when both are closed.
+		   Get the current state for any of the doors and return 'open' for the
+		   contact if either door is open. Only return 'closed' when both are closed.
+		   
+		   What we're looking for is "any doors open?" or "all doors closed?"
+		   
+		   leftDoor    rightDoor     nOpenPrev      anyOpenNow      stateChange
+		   --------    ---------     ---------      ----------      -----------
+		   0.  c           c             0               -               -
+		   1.  o           c             0               y               y
+		   2.  c           c             1               n               y
+		   3.  c           o             0               y               y
+		   4.  o           o             1               y               n *
+		   5.  c           o             2               y               n *
+		   6.  c           c             1               n               y (#2)
 		*/
-		def anyOpen=false
 		def leftOpen = device.latestValue("leftDoor")=='open'
 		def rightOpen = device.latestValue("rightDoor")=='open'
-		def n_open = (leftOpen?1:0) + (rightOpen?1:0)
-		if(value=='open' || n_open>0)
-			anyOpen = true
+		def nOpenPrev = (leftOpen?1:0) + (rightOpen?1:0)
+		def anyOpenNow = (nOpenPrev + (isOpen?1:0) - (isClosed?1:0)) > 0 ? true : false
+
+		log.trace "leftOpen: ${leftOpen}, rightOpen: ${rightOpen}, nOpenPrev: ${nOpenPrev}, value: ${value}"
 
 		/* State change on the contact if:
-		      o both are closed and one opens
-			  o only one is open and it closes
+		   o both are closed and one opens
+		   o only one is open and it closes
 		*/
-		def stateChange=false
-		if(n_open==0 && value=='open')
-			stateChange = true
-		else if(n_open==1 && value=='closed')
-			stateChange = true
-		// the overall contact state
-		result << createEvent(name: "contact", value: (anyOpen ? 'open' : 'closed'), isStateChange: stateChange)
+		def stateChange = mainResult['isStateChange']
+		if(
+				(nOpenPrev==2 && isClosed) ||	// both were open and one closing
+				(nOpenPrev==1 && isOpen))		// one was open now the other opening
+			stateChange = false		// not a state change for the contact
+
+		// the logical contact event
+		result << createEvent(name: "contact",
+							  value: (anyOpenNow ? 'open' : 'closed'),
+							  isStateChange: stateChange,
+							  displayed: false)
 	}
 
     log.debug result

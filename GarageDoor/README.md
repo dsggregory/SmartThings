@@ -4,7 +4,7 @@
 
 Based on a project described at https://community.smartthings.com/t/arduino-smartshield-garage-controller/1333
 
-This project leverages an Arduino (Ard) plus SmartThings Shield (STsh) (STsh+Ard) to build a controller that can open and close garage doors from a ST app.
+This project leverages an Arduino (Ard) plus SmartThings Shield (STsh) (STsh+Ard) to build a controller that can open and close garage doors from a ST app. It is written to service two doors and includes a contact switch capability that can work with smart apps such as 'Left It Open'.
 
 ## Project Equipment
 * <A href="http://www.amazon.com/Arduino-UNO-SMD-R3-board/dp/B00F6JCV20/ref=sr_1_2?ie=UTF8&qid=1391971284&sr=8-2&keywords=arduino+r3">Arduino Uno</A>
