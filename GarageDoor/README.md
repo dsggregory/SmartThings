@@ -4,7 +4,7 @@
 
 Based on a project described at https://community.smartthings.com/t/arduino-smartshield-garage-controller/1333
 
-This project leverages an Arduino (Ard) plus SmartThings Shield (STsh) (STsh+Ard) to build a controller that can open and close garage doors from a ST app. It is written to service two doors and includes a contact switch capability that can work with smart apps such as 'Left It Open'.
+This project leverages an Arduino (Ard) plus SmartThings Shield (STsh) (STsh+Ard) to build a controller that can open and close garage doors from a ST app. It is written to service two doors and includes a contact switch capability that can work with smart apps such as 'Left It Open' (see SmartApps below).
 
 ## Project Equipment
 * <A href="http://www.amazon.com/Arduino-UNO-SMD-R3-board/dp/B00F6JCV20/ref=sr_1_2?ie=UTF8&qid=1391971284&sr=8-2&keywords=arduino+r3">Arduino Uno</A>
@@ -25,6 +25,7 @@ I purchased the cheapest Arduino UNO R3 that I could find which included the Dup
 * garage.groovy - SmartThings device handler code
 * garage.ino - Arduino + SmartThings Shield code
 * ST Arduino Library - From http://docs.smartthings.com/en/latest/arduino/
+* leftopen.groovy - Modified "Left It Open" SmartApp to support crossing modes
 
 ### SmartThings Arduino Library
 This library is for the ST Shield. Follow the installation steps from http://docs.smartthings.com/en/latest/arduino/.
@@ -37,6 +38,9 @@ The **garage.groovy** code is to be used to define the device handler of the STs
     * Edit the metadata.definition and set **namespace** and **author** attributes to your liking
     * Press "Save"
     * Press "Publish", then  "For Me" - this delivers the code to your ST hub
+
+### SmartApp for the Garage
+The **leftopen.groovy** code is a SmartApp for the garage controller. Based on the "Left It Open" app provided by SmartThings, this also supports crossing from excluded modes into included modes where the app is active. This app can be added to the device and configured to notify you when any garage door has been left open longer than some specified period of time.
 
 ## Join STsh+Ard to Your ST Hub
 Assemble the STsh atop the Arduino, power it up and use your ST app on your mobile phone to include the device in your ST network. Name the device "GarageController" in the ST app. Choose the device type of "Garage Door" that you created from the "SmartThings Device Handler" step above.
