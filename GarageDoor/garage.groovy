@@ -9,6 +9,7 @@ metadata {
 		capability "Refresh"
 		capability "Switch"
 		capability "Contact Sensor"
+		// capability "Garage Door Control"
 		
 		attribute "contact",   "string"
 
@@ -21,17 +22,31 @@ metadata {
 
 	// tile definitions
 	tiles {
-		standardTile("leftDoor", "device.leftDoor", width: 1, height: 1, canChangeIcon: true, canChangeBackground: true) {
-			state "closed", label: 'Closed', action: "pushLeft", icon: "st.doors.garage.garage-closed", backgroundColor: "#79b821", nextState: "opening"
-			state "open", label: 'Open', action: "pushLeft", icon: "st.doors.garage.garage-open", backgroundColor: "#ffa81e", nextState: "closing"
-			state "opening", label: "Opening", icon: "st.doors.garage.garage-opening", backgroundColor: "89C2E8"
-			state "closing", label: "Closing", icon: "st.doors.garage.garage-closing", backgroundColor: "89C2E8"
+		standardTile("leftDoor", "device.leftDoor", width: 1, height: 1,
+					 canChangeIcon: true, canChangeBackground: true) {
+			state("closed", label: 'Closed', action: "pushLeft",
+			  icon: "st.doors.garage.garage-closed", backgroundColor: "#79b821",
+			  nextState: "opening")
+			state("open", label: 'Open', action: "pushLeft",
+			  icon: "st.doors.garage.garage-open", backgroundColor: "#ffa81e",
+			  nextState: "closing")
+			state("opening", label: "Opening",
+			  icon: "st.doors.garage.garage-opening", backgroundColor: "89C2E8")
+			state("closing", label: "Closing",
+			  icon: "st.doors.garage.garage-closing", backgroundColor: "89C2E8")
 		}
-		standardTile("rightDoor", "device.rightDoor", width: 1, height: 1, canChangeIcon: true, canChangeBackground: true) {
-			state "closed", label: 'Closed', action: "pushRight", icon: "st.doors.garage.garage-closed", backgroundColor: "#79b821", nextState: "opening"
-			state "open", label: 'Open', action: "pushRight", icon: "st.doors.garage.garage-open", backgroundColor: "#ffa81e", nextState: "closing"
-			state "opening", label: "Opening", icon: "st.doors.garage.garage-opening", backgroundColor: "89C2E8"
-			state "closing", label: "Closing", icon: "st.doors.garage.garage-closing", backgroundColor: "89C2E8"
+		standardTile("rightDoor", "device.rightDoor", width: 1, height: 1,
+					 canChangeIcon: true, canChangeBackground: true) {
+			state("closed", label: 'Closed', action: "pushRight",
+			  icon: "st.doors.garage.garage-closed", backgroundColor: "#79b821",
+			  nextState: "opening")
+			state("open", label: 'Open', action: "pushRight",
+			  icon: "st.doors.garage.garage-open", backgroundColor: "#ffa81e",
+			  nextState: "closing")
+			state("opening", label: "Opening",
+			  icon: "st.doors.garage.garage-opening", backgroundColor: "89C2E8")
+			state("closing", label: "Closing",
+			  icon: "st.doors.garage.garage-closing", backgroundColor: "89C2E8")
 		}
 
 		main "leftDoor"
